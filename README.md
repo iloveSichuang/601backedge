@@ -4,7 +4,6 @@
 
 **python后台启动方式更新: python3.x -m flask --app start run**
 
-**重磅！！！！！！！！！！！**
 
 **全新的风格界面，完全的前后端分离。基于ElementUI，前端代码基于RuoYi-UI，后端接口进行适配**
 
@@ -15,14 +14,7 @@
 **系统已经切换python 3，我的是在python 3.7.0下测试的，理论上Python 3版本应该都是可以运行的。需要Python 2版本的朋友可以checkout到python2分支。**
 
 
-**完整设计文档**
-[参考百度阅读 -- 已经不可用](https://yuedu.baidu.com/ebook/8e8853732e60ddccda38376baf1ffc4fff47e278)
 
-**如果有需要详细设计电子书的同学，10元一本，一杯奶茶不到的价格，写作不容易。**
-
-**加我微信支付，备注authbase。**
-   
-**微信号是jeffrey-chu**
 
 ![微信号](doc/wx.png)
 
@@ -78,10 +70,7 @@
 2. pip3 install -r requirements.txt
 3. 更改config.py DevelopmentConfig类下的数据库连接，提供用户名密码。
 4. python3.x -m flask --app start run [-h 0.0.0.0] [-p 8080]
- 
-**讨论群**
 
-欢迎加入python技术爱好者，群号码：297690915，内有福利！
 
 **效果图**
 
@@ -98,7 +87,3 @@
 ![资源管理](doc/资源管理.png)
 
 ![登录历史](doc/登录历史.png)
-
-**图书资源推荐**
-
-![小程序](doc/扫码_搜索联合传播样式-标准色版.png)
