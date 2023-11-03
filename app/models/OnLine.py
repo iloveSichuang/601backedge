@@ -1,6 +1,7 @@
 from app import db
 from datetime import datetime
 
+
 class OnLine(db.Model):
     __tablename__ = 'SYONLINE'
     ID = db.Column(db.String(36), primary_key=True)
@@ -13,7 +14,7 @@ class OnLine(db.Model):
         return str(self.ID)
 
     def __repr__(self):
-        return '<Oneline %r>\n' %(self.LOGINNAME)
+        return '<Oneline %r>\n' % (self.LOGINNAME)
 
     def to_json(self):
         return {
@@ -22,4 +23,4 @@ class OnLine(db.Model):
             'userName': self.LOGINNAME,
             'ipaddr': self.IP,
             'type': self.TYPE
-        }   
+        }

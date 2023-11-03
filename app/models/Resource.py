@@ -7,7 +7,7 @@ from flask import jsonify
 class Resource(db.Model, UserMixin):
     __tablename__ = 'SYRESOURCE'
     __mapper_args__ = {
-     #"order_by": 'SEQ'
+        # "order_by": 'SEQ'
     }
     ID = db.Column(db.String(36), primary_key=True)
     CREATEDATETIME = db.Column(db.DateTime, index=True, default=datetime.now)
@@ -66,6 +66,7 @@ class Resource(db.Model, UserMixin):
 
     def to_router_json(self):
         router = {
+            'seq': self.SEQ,
             'name': self.PATH.capitalize(),
             'path': self.PATH,
             'hidden': False,
@@ -76,13 +77,13 @@ class Resource(db.Model, UserMixin):
                 'title': self.NAME,
                 'icon': self.ICONCLS,
                 'noCache': False,
-                'link':''
+                'link': ''
             },
             'children': [
                 res.to_router_json() for res in self.children if res.type.ID == '3' or res.type.ID == '0'
             ]
         }
-
+        # print(router['children'])
         if not router['children']:
             del router['children']
             del router['redirect']
@@ -90,6 +91,9 @@ class Resource(db.Model, UserMixin):
         if not router['component']:
             router['component'] = 'Layout'
 
+        # sorted_list = sorted(router, key=lambda x: x['seq'])
+        # print(router)
+        # print(type(router))
         return router
 
     def to_menu_json(self):
@@ -117,4 +121,5 @@ class Resource(db.Model, UserMixin):
         return {}
 
     def __repr__(self):
-        return '<Resource name:%r url:%r>\n' %(self.NAME, self.URL)
+        return '<Resource name:%r url:%r>\n' % (self.NAME, self.URL)
+

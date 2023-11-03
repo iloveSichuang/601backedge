@@ -7,7 +7,7 @@ import hashlib
 from flask_login import login_user, logout_user, login_required, \
     current_user
 from datetime import datetime
-from .. import  db
+from .. import db
 import uuid
 from sqlalchemy import asc, true
 from sqlalchemy import desc
