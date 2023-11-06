@@ -9,7 +9,7 @@ from flask import render_template, request
 from flask_login import current_user
 from flask import jsonify
 from datetime import datetime
-from .. import  db
+from .. import db
 import uuid
 from sqlalchemy import desc
 from sqlalchemy import asc

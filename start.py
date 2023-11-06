@@ -12,4 +12,4 @@ def page_not_found(e):
 
 if __name__ == '__main__':
     # asyncio.get_event_loop().run_until_complete(start_server)
-    app.run()
+    app.run(host="0.0.0.0", debug=True)

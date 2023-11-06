@@ -31,7 +31,7 @@ class DevelopmentConfig(Config):
     PORT = '3306'
     DATABASE = 'authbase'
     USERNAME = 'root'
-    PASSWORD = '1234'
+    PASSWORD = 'root'
     DB_URI = 'mysql+mysqlconnector://{}:{}@{}:{}/{}?charset=utf8'.format(USERNAME, PASSWORD, HOSTNAME, PORT, DATABASE)
     SQLALCHEMY_DATABASE_URI = DB_URI
 
