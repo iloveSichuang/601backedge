@@ -23,6 +23,10 @@ def get_image(id):
     return send_from_directory('D:/Users/601backedge/app/model_and_data/results', filename)
 
 
+@base.route('/get_imagebypath/<path:filename>')  # 返回训练结果到前端，根据需求还要再改，
+def get_imagebypath(filename):
+    filename = f'{filename}.png'
+    return send_from_directory('D:/Users/601backedge/app/model_and_data/results', filename)
 '''
 将训练模型所需要的所有参数都返回
 '''
@@ -117,6 +121,7 @@ def train_model(id):
             trainModel = Train_ML(**train_params)
             print(333)
             trainModel.train()
+            model.status = 1
             db.session.commit()  # 执行插入数据库
             data = {
                 'msg': '训练完成',
@@ -134,6 +139,7 @@ def train_model(id):
             trainModel = Train_DML(**train_params)
             print(555)
             trainModel.train()
+            model.status = 1
             print(666)
             db.session.commit()
             data = {

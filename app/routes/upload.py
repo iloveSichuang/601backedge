@@ -264,6 +264,7 @@ def modify_params(id):
         params[key] = value
     print(params)
     model.params = str(params)
+    model.status = 0
     try:
         db.session.commit()
         return '修改完成'

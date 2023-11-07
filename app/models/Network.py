@@ -1,6 +1,6 @@
 from app import db
 from datetime import datetime
-
+from sqlalchemy import desc
 # 模型model
 '''
 模型名称
@@ -41,7 +41,6 @@ class Networkcategory(db.Model):
 
 class ModelApp(db.Model):
     __tablename__ = 'model_application'
-
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     model_name = db.Column(db.String(100), nullable=False)
     model_description = db.Column(db.Text, nullable=False)
@@ -49,11 +48,19 @@ class ModelApp(db.Model):
     params = db.Column(db.String(500), nullable=False)
     network_id = db.Column(db.Integer, db.ForeignKey('network.id'), nullable=False)
     appliparams = db.relationship('AppParams', backref='model_application')
-
+    status = db.Column(db.Integer, default=0)   # 0表示为未训练 1表示训练完成
     def to_dict(self):
+        if self.status == 0:
+            status = None
+            path = None
+        else:
+            status = 'success'
+            appparams = self.appliparams
+            appparam = appparams[-1]
+            path = appparam.result
         return {'id': self.id, 'model_name': self.model_name, 'model_description': self.model_description,
                 'network': self.network.name, 'dataset': self.dataset, 'params': eval(self.params), 'tagStatus': 'info',
-                'tagText': '未开始', 'status': None, 'percentage': 0, 'imagePath': None}
+                'tagText': '未开始', 'status': status, 'percentage': 0, 'imagePath': None, 'path':path}
 
 
 class AppParams(db.Model):
