@@ -33,6 +33,7 @@ def upload_network():
     :return:
     """
     if request.method == 'POST':
+        user = current_user
         data = request.form
         name = request.form.get('network_name')
         category_id = request.form.get('network_func')
@@ -49,17 +50,17 @@ def upload_network():
                 params[value] = value_value
         params = str(params)
 
-        print(params)
         file = request.files['file']
         if file:
             # 保存文件到服务器
             filename = file.filename
-            print(filename)
+
             file.save(os.path.join('D:/Users/601backedge/app/model_and_data/models', filename))
             # 将保存路径存入数据库
             save_path = os.path.join('D:/Users/601backedge/app/model_and_data/models', filename)
-            print(save_path)
-            dataset = Network(name=name, category_id=category_id, network_params=str(params), path=save_path, is_deep=is_deep)
+            # print(save_path)
+            dataset = Network(name=name, category_id=category_id, network_params=str(params), path=save_path, is_deep=is_deep,
+                              created_username=user.LOGINNAME)
             db.session.add(dataset)
             db.session.commit()
             return '上传成功'
@@ -71,59 +72,40 @@ def upload_network():
         return jsonify(networkcats)
 
 
-@base.route('/upload_modelapp', methods=['GET', 'POST'])  # 上传网络模型应用，(自定义)
+@base.route('/upload_modelapp', methods=['POST'])  # 上传网络模型应用，(自定义)
 @login_required
 def upload_modelapp():
-    """
-    get方法，返回六类，用户根据六类选择网络
-    post,获取...
-    :return:
-    """
-    if request.method == 'GET':
-        networkcats = Networkcategory.query.all()
-        networkcats = [netcat.to_dict() for netcat in networkcats]
-        return jsonify(networkcats)
-    else:
-        try:
-            print(request.args)
-            print(request.get_json())
-            data = request.get_json()
-            print(type(data))
-            # model_name = request.form.get('model_name')
-            # model_description = request.form.get('model_description')
-            # dataset = request.form.get('dataset')
-            # network_id = request.form.get('network_id')
-            model_name = data['model_name']
-            model_description = data['model_description']
-            dataset = data['dataset']
-            network_id = data['network_id']
-            print(model_name)
-            print(network_id)
-            network = Network.query.get(network_id)
-            print(network)
-            nework_params = network.network_params
-            print(nework_params)
-            db_dict = eval(nework_params)
-            keys = db_dict.keys()
-            params = {}  # 参数都是数据库读出的列表对应的
-            print(keys)
-            for key in keys:
-                # print(key)
-                value = data.get(key)
-                # Create a new Data object and save it to the database
-                params[key] = value
+    try:
+        user = current_user
+        data = request.get_json()
+        model_name = data['model_name']
+        model_description = data['model_description']
+        dataset = data['dataset']
+        network_id = data['network_id']
+        network = Network.query.get(network_id)
+        nework_params = network.network_params
+        db_dict = eval(nework_params)
+        keys = db_dict.keys()
+        params = {}  # 参数都是数据库读出的列表对应的
+        print(keys)
+        for key in keys:
+            # print(key)
+            value = data.get(key)
+            # Create a new Data object and save it to the database
+            params[key] = value
 
-            model = ModelApp(model_name=model_name,
-                             model_description=model_description,
-                             dataset=dataset,
-                             params=str(params),
-                             network_id=network_id)
-            db.session.add(model)
-            db.session.commit()
-            return '添加成功'
-        except Exception as e:
-            print(e)
-            return '添加失败'
+        model = ModelApp(model_name=model_name,
+                         model_description=model_description,
+                         dataset=dataset,
+                         params=str(params),
+                         network_id=network_id,
+                         created_username=user.LOGINNAME)
+        db.session.add(model)
+        db.session.commit()
+        return '添加成功'
+    except Exception as e:
+        print(e)
+        return '添加失败'
 
 
 @base.route('/show_networks', methods=['GET'])
@@ -135,12 +117,12 @@ def show_networks():
     return jsonify(networks)
 
 
-@base.route('/get_netcats', methods=['GET'])
-def get_netcats():
-    networkcats = Networkcategory.query.all()
-    networkcats = [netcat.to_dict2() for netcat in networkcats]
-    # return render_template('upload_network.html', model_funcs=model_funcs)
-    return jsonify(networkcats)
+# @base.route('/get_netcats', methods=['GET'])
+# def get_netcats():
+#     networkcats = Networkcategory.query.all()
+#     networkcats = [netcat.to_dict2() for netcat in networkcats]
+#     # return render_template('upload_network.html', model_funcs=model_funcs)
+#     return jsonify(networkcats)
 
 
 @base.route('/delete_network/<id>', methods=['GET','POST'])

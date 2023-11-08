@@ -30,6 +30,7 @@ class User(db.Model, UserMixin):
     PHONENUMBER = db.Column(db.String(11))
     STATUS = db.Column(db.String(10))
 
+
     organizations = db.relationship('Organization',
                                     secondary=user_organization_table,
                                     backref=db.backref('users', lazy='dynamic'),)

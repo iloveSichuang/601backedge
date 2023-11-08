@@ -24,7 +24,7 @@ class VMDS:
         for i in range(self.K):     # 把要展示的内容展示出来
             plt.subplot(self.K, 1, i + 1)
             plt.plot(u[i, :])
-        path = rf'D:\py\workspace\模型训练\TrainProject--4\model_and_data\results\{image_name}.png'  # 采用绝对路径
+        path = rf'D:\Users\601backedge\app\model_and_data\results\{image_name}.png'  # 采用绝对路径
         plt.savefig(path)  # 保存图像到本地
         plt.show()  #
         plt.close()

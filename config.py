@@ -27,7 +27,7 @@ class DevelopmentConfig(Config):
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
 
-    HOSTNAME = '127.0.0.1'
+    HOSTNAME = '192.168.3.165'
     PORT = '3306'
     DATABASE = 'authbase'
     USERNAME = 'root'

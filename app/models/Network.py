@@ -17,6 +17,7 @@ class Network(db.Model):
     network_params = db.Column(db.String(500), nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey('netcat.id'), nullable=False)
     is_deep = db.Column(db.Integer, default=0)   # 0表示为机器学习 1表示深度学习
+    created_username = db.Column(db.String(100), nullable=False)  # LoginName
     modelapps = db.relationship('ModelApp', backref='network')
     def to_dict(self):
         if self.is_deep==0:
@@ -24,7 +25,7 @@ class Network(db.Model):
         else:
             type = '深度学习'
         return {'id': self.id, 'name': self.name, 'path':self.path, 'network_params': self.network_params,
-                'category': self.netcat.name, 'type': type}
+                'category': self.netcat.name, 'type': type, 'created_username': self.created_username}
 
 
 class Networkcategory(db.Model):
@@ -35,6 +36,7 @@ class Networkcategory(db.Model):
 
     def to_dict(self):
         return {'value': self.id, 'label': self.name}
+
     def to_dict2(self):
         return {'value': self.name, 'text': self.name}
 
@@ -49,18 +51,21 @@ class ModelApp(db.Model):
     network_id = db.Column(db.Integer, db.ForeignKey('network.id'), nullable=False)
     appliparams = db.relationship('AppParams', backref='model_application')
     status = db.Column(db.Integer, default=0)   # 0表示为未训练 1表示训练完成
+    created_username = db.Column(db.String(100), nullable=False)
     def to_dict(self):
         if self.status == 0:
-            status = None
+            percentage = 0
+            process = None
             path = None
         else:
-            status = 'success'
+            process = 'success'
+            percentage = 100
             appparams = self.appliparams
             appparam = appparams[-1]
             path = appparam.result
         return {'id': self.id, 'model_name': self.model_name, 'model_description': self.model_description,
-                'network': self.network.name, 'dataset': self.dataset, 'params': eval(self.params), 'tagStatus': 'info',
-                'tagText': '未开始', 'status': status, 'percentage': 0, 'imagePath': None, 'path':path}
+                'network': self.network.name, 'dataset': self.dataset, 'params': eval(self.params), 'process': process,
+                'status': self.status, 'percentage': percentage, 'imagePath': None, 'path':path, 'created_username': self.created_username}
 
 
 class AppParams(db.Model):

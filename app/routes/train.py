@@ -7,7 +7,8 @@ import random
 import string
 from ..base import base
 import os
-from flask_login import login_required
+from flask_login import login_required, current_user
+
 '''
 返回html都用不到，针对前后端分离，都有新的接口
 '''
@@ -120,7 +121,8 @@ def train_model(id):
             print(222)
             trainModel = Train_ML(**train_params)
             print(333)
-            trainModel.train()
+            result = trainModel.train()
+            print(444)
             model.status = 1
             db.session.commit()  # 执行插入数据库
             data = {
@@ -187,3 +189,20 @@ def delete_appparams(id):
         return '删除成功'
     else:
         return '删除失败'
+
+
+@base.route('/show_userinfo', methods=['GET'])
+@login_required
+def show_userinfo():
+    user = current_user
+    return user.ID
+
+
+@base.route('/get_ownnetworks', methods=['GET'])
+@login_required
+def get_ownnetworks():
+    user = current_user
+    print(user.ID)
+    networks = Network.query.filter_by(created_username=user.LOGINNAME)
+    networks = [network.to_dict() for network in networks]
+    return jsonify(networks)

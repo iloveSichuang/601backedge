@@ -39,9 +39,10 @@ class Train_ML:
 
         # 要结果数据，还是要画图？
         # 如何保存训练好的保存数据
-        a, b, c = model_.forward(data)  # 训练数据
-        model_.plot(data, self.image_name)  # 画图
-        return a,b,c
+        # a, b, c = model_.forward(data)  # 训练数据
+        # model_.plot(data, self.image_name)  # 画图
+        result = model_.forward(data, self.image_name)
+        return result
 
 
 class Train_DML:
