@@ -12,7 +12,7 @@ from .MyDataset import MyDatasetReader
 
 class Train_ML:
     def __init__(self, dataset, network_name, model_params, image_name):
-        self.dataset = fr'D:\Users\601backedge\app\model_and_data\datasets\{dataset}'
+        self.dataset = fr'D:\desktop\601backedge\app\model_and_data\datasets\{dataset}'
         self.network = network_name
         self.params = model_params
         self.image_name = image_name
@@ -26,7 +26,7 @@ class Train_ML:
         # 映射网络模型
         # 假设网络模型名为小写（vmd）,类名为大写（VMD）
         # 步骤1：获取模块的规范
-        module_spec = importlib.util.spec_from_file_location(self.network.upper(), fr'D:\Users\601backedge\app\model_and_data\models\{self.network}.py')
+        module_spec = importlib.util.spec_from_file_location(self.network.upper(), fr'D:\desktop\601backedge\app\model_and_data\models\{self.network}.py')
 
         # 步骤2：加载模块
         module = importlib.util.module_from_spec(module_spec)
@@ -47,7 +47,7 @@ class Train_ML:
 
 class Train_DML:
     def __init__(self, dataset, network_name, model_params, image_name):
-        self.dataset = fr'D:\Users\601backedge\app\model_and_data\datasets\{dataset}'
+        self.dataset = fr'D:\desktop\601backedge\app\model_and_data\datasets\{dataset}'
         self.network = network_name
         # 默认网络都含有这几个参数
         self.epochs = int(model_params['epochs'])
@@ -60,7 +60,7 @@ class Train_DML:
         data = MyDatasetReader(self.dataset)
         print(data)
 
-        module_spec = importlib.util.spec_from_file_location(self.network.upper(), fr'D:\Users\601backedge\app\model_and_data\models\{self.network}.py')
+        module_spec = importlib.util.spec_from_file_location(self.network.upper(), fr'D:\desktop\601backedge\app\model_and_data\models\{self.network}.py')
 
         # 步骤2：加载模块
         module = importlib.util.module_from_spec(module_spec)
@@ -96,7 +96,7 @@ class Train_DML:
                 print(f'Epoch [{epoch + 1}/{self.epochs}], Loss: {losses/len(data):.4f}')
         print(loss_l)
         plt.plot(loss_l)
-        path = rf'D:\Users\601backedge\app\model_and_data\results\{self.image_name}.png'
+        path = rf'D:\desktop\601backedge\app\model_and_data\results\{self.image_name}.png'
         plt.savefig(path)
         plt.show()
         plt.close()

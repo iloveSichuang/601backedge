@@ -151,8 +151,8 @@ INSERT INTO `network` VALUES ('1', 'mlp', 'model_and_data/models\\mlp.py', '{\'i
 INSERT INTO `network` VALUES ('2', 'mlp', 'model_and_data/models\\mlp.py', '{\'input_size\': \'输入大小\', \'output_size\': \'输出大小\', \'hidden_size\': \'隐藏层大小\', \'num_layers\': \'隐藏层层数\'}', '4', '1');
 INSERT INTO `network` VALUES ('21', 'vmds', 'model_and_data/models\\vmds.py', '{\'alpha\': \'数据保真度约束的平衡参数\', \'K\': \'要分解模态的数量\', \'tau\': \'噪声容量\', \'DC\': \'合成的信号\', \'init\': \'初始化值\', \'tol\': \'收敛准则的容忍度\'}', '1', '0');
 INSERT INTO `network` VALUES ('22', 'mlp11', 'model_and_data/models\\化工安全案例问答系统架构.doc', '{\'input_size\': \'输入大小\', \'batch_size\': \'批\', \'epoch\': \'伦茨\'}', '1', '0');
-INSERT INTO `network` VALUES ('28', '1', 'D:/Users/601backedge/app/model_and_data/models\\output1.json', '{\'1\': \'2\'}', '1', '0');
-INSERT INTO `network` VALUES ('29', '1', 'D:/Users/601backedge/app/model_and_data/models\\output1.json', '{\'111\': \'111\'}', '1', '0');
+INSERT INTO `network` VALUES ('28', '1', 'D:/desktop/601backedge/app/model_and_data/models\\output1.json', '{\'1\': \'2\'}', '1', '0');
+INSERT INTO `network` VALUES ('29', '1', 'D:/desktop/601backedge/app/model_and_data/models\\output1.json', '{\'111\': \'111\'}', '1', '0');
 
 -- ----------------------------
 -- Table structure for sample_set

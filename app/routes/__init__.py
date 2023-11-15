@@ -10,3 +10,4 @@ from . import dicttype
 from . import deviceinfo
 from . import upload
 from . import train
+from . import dataset

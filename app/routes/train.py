@@ -21,13 +21,14 @@ def get_image(id):
     appparam = appparams[-1]
     filename = '{}.png'.format(appparam.result)
 
-    return send_from_directory('D:/Users/601backedge/app/model_and_data/results', filename)
+    return send_from_directory('D:/desktop/601backedge/app/model_and_data/results', filename)
 
 
 @base.route('/get_imagebypath/<path:filename>')  # 返回训练结果到前端，根据需求还要再改，
 def get_imagebypath(filename):
     filename = f'{filename}.png'
-    return send_from_directory('D:/Users/601backedge/app/model_and_data/results', filename)
+    print(filename)
+    return send_from_directory('D:/desktop/601backedge/app/model_and_data/results', filename)
 '''
 将训练模型所需要的所有参数都返回
 '''
@@ -195,6 +196,10 @@ def delete_appparams(id):
 @login_required
 def show_userinfo():
     user = current_user
+    # 采用相对路径 sys真是个天才
+    f = open('app/model_and_data/datasets/data.csv', 'r', encoding='utf-8')
+    lines = f.readlines()
+    print(lines)
     return user.ID
 
 

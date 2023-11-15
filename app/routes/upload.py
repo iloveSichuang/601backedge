@@ -55,9 +55,9 @@ def upload_network():
             # 保存文件到服务器
             filename = file.filename
 
-            file.save(os.path.join('D:/Users/601backedge/app/model_and_data/models', filename))
+            file.save(os.path.join('D:/desktop/601backedge/app/model_and_data/models', filename))
             # 将保存路径存入数据库
-            save_path = os.path.join('D:/Users/601backedge/app/model_and_data/models', filename)
+            save_path = os.path.join('D:/desktop/601backedge/app/model_and_data/models', filename)
             # print(save_path)
             dataset = Network(name=name, category_id=category_id, network_params=str(params), path=save_path, is_deep=is_deep,
                               created_username=user.LOGINNAME)
