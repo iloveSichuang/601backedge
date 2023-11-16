@@ -1,0 +1,83 @@
+
+
+default_config.yaml
+
+
+compute_environment: LOCAL_MACHINE
+deepspeed_config:
+  gradient_accumulation_steps: 1
+  gradient_clipping: 1
+  offload_optimizer_device: none
+  offload_param_device: none
+  zero3_init_flag: false
+  zero_stage: 2
+distributed_type: DEEPSPEED
+downcast_bf16: 'no'
+machine_rank: 0
+main_training_function: main
+mixed_precision: fp16
+num_machines: 1
+num_processes: 2
+rdzv_backend: static
+same_network: true
+tpu_env: []
+tpu_use_cluster: false
+tpu_use_sudo: false
+use_cpu: false
+#compute_environment: LOCAL_MACHINE
+#deepspeed_config:
+# deepspeed_config_file: /data/Code/haidong/LLama-tuning/zero_stage3_offload_config.json
+# zero3_init_flag: true
+#distributed_type: DEEPSPEED
+#fsdp_config: {}
+#machine_rank: 0
+#main_process_ip: null
+#main_process_port: null
+#main_training_function: main
+#num_machines: 1
+#num_processes: 3
+#use_cpu: false
+
+
+pip install einops transformers_stream_generator
+
+
+
+
+
+
+
+
+
+
+
+
+Traceback (most recent call last):
+  File "/data/Code/haidong/LLaMA-Efficient-Tuning/./src/train_bash.py", line 14, in <module>
+    main()
+  File "/data/Code/haidong/LLaMA-Efficient-Tuning/./src/train_bash.py", line 5, in main
+    run_exp()
+  File "/data/Code/haidong/LLaMA-Efficient-Tuning/src/llmtuner/tuner/tune.py", line 28, in run_exp
+    run_sft(model_args, data_args, training_args, finetuning_args, generating_args, callbacks)
+  File "/data/Code/haidong/LLaMA-Efficient-Tuning/src/llmtuner/tuner/sft/workflow.py", line 29, in run_sft
+    dataset = preprocess_dataset(dataset, tokenizer, data_args, training_args, stage="sft")
+  File "/data/Code/haidong/LLaMA-Efficient-Tuning/src/llmtuner/dsets/preprocess.py", line 163, in preprocess_dataset
+    dataset = dataset.map(
+  File "/data/Code/haidong/LLaMA-Efficient-Tuning/venv/lib/python3.10/site-packages/datasets/arrow_dataset.py", line 592, in wrapper
+    out: Union["Dataset", "DatasetDict"] = func(self, *args, **kwargs)
+  File "/data/Code/haidong/LLaMA-Efficient-Tuning/venv/lib/python3.10/site-packages/datasets/arrow_dataset.py", line 557, in wrapper
+    out: Union["Dataset", "DatasetDict"] = func(self, *args, **kwargs)
+  File "/data/Code/haidong/LLaMA-Efficient-Tuning/venv/lib/python3.10/site-packages/datasets/arrow_dataset.py", line 3097, in map
+    for rank, done, content in Dataset._map_single(**dataset_kwargs):
+  File "/data/Code/haidong/LLaMA-Efficient-Tuning/venv/lib/python3.10/site-packages/datasets/arrow_dataset.py", line 3474, in _map_single
+    batch = apply_function_on_filtered_inputs(
+  File "/data/Code/haidong/LLaMA-Efficient-Tuning/venv/lib/python3.10/site-packages/datasets/arrow_dataset.py", line 3353, in apply_function_on_filtered_inputs
+    processed_inputs = function(*fn_args, *additional_args, **fn_kwargs)
+  File "/data/Code/haidong/LLaMA-Efficient-Tuning/src/llmtuner/dsets/preprocess.py", line 62, in preprocess_supervised_dataset
+    for source_ids, target_ids in template.encode_multiturn(tokenizer, query, response, history, system):
+  File "/data/Code/haidong/LLaMA-Efficient-Tuning/src/llmtuner/extras/template.py", line 55, in encode_multiturn
+    encoded_pairs = self._encode(tokenizer, system, history)
+  File "/data/Code/haidong/LLaMA-Efficient-Tuning/src/llmtuner/extras/template.py", line 117, in _encode
+    resp_ids = self._convert_inputs_to_ids(tokenizer, context=[resp])
+  File "/data/Code/haidong/LLaMA-Efficient-Tuning/src/llmtuner/extras/template.py", line 154, in _convert_inputs_to_ids
+    raise NotImplementedError

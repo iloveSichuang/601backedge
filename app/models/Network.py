@@ -85,26 +85,26 @@ class AppParams(db.Model):
 '''
 
 
-class Dataset(db.Model):
-    __tablename__ = 'in_out'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(255), nullable=False)
-    file_path = db.Column(db.String(255), nullable=False)
-    input = db.Column(db.String(255), nullable=False)
-    output = db.Column(db.String(255), nullable=False)
-    model_id = db.Column(db.Integer, db.ForeignKey('csv_file.id'), nullable=False)
+# class Dataset(db.Model):
+#     __tablename__ = 'in_out'
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     name = db.Column(db.String(255), nullable=False)
+#     file_path = db.Column(db.String(255), nullable=False)
+#     input = db.Column(db.String(255), nullable=False)
+#     output = db.Column(db.String(255), nullable=False)
+#     model_id = db.Column(db.Integer, db.ForeignKey('csv_file.id'), nullable=False)
+#
+#     def to_dict(self):
+#         return {'id': self.id, 'name': self.name, 'path': self.file_path, 'input': self.input, 'output': self.output}
 
-    def to_dict(self):
-        return {'id': self.id, 'name': self.name, 'path': self.file_path, 'input': self.input, 'output': self.output}
-
-
-class Csv_file(db.Model):
-    __tablename__ = 'csv_file'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    file_name = db.Column(db.String(255), nullable=False)
-    file_path = db.Column(db.String(255), nullable=False)
-    upload_time = db.Column(db.DateTime, default=db.func.current_timestamp())
-    datasets = db.relationship('Dataset', backref='original_file')
+#
+# class Csv_file(db.Model):
+#     __tablename__ = 'csv_file'
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     file_name = db.Column(db.String(255), nullable=False)
+#     file_path = db.Column(db.String(255), nullable=False)
+#     upload_time = db.Column(db.DateTime, default=db.func.current_timestamp())
+#     datasets = db.relationship('Dataset', backref='original_file')
 
 
 
