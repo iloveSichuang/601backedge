@@ -27,11 +27,11 @@ class DevelopmentConfig(Config):
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
 
-    HOSTNAME = 'localhost'
+    HOSTNAME = '192.168.3.165'
     PORT = '3306'
     DATABASE = 'authbase'
     USERNAME = 'root'
-    PASSWORD = '1234'
+    PASSWORD = 'root'
     DB_URI = 'mysql+mysqlconnector://{}:{}@{}:{}/{}?charset=utf8'.format(USERNAME, PASSWORD, HOSTNAME, PORT, DATABASE)
     SQLALCHEMY_DATABASE_URI = DB_URI
 

@@ -55,9 +55,9 @@ def upload_network():
             # 保存文件到服务器
             filename = file.filename
 
-            file.save(os.path.join('D:/desktop/601backedge/app/model_and_data/models', filename))
+            file.save(os.path.join('app/model_and_data/models', filename))
             # 将保存路径存入数据库
-            save_path = os.path.join('D:/desktop/601backedge/app/model_and_data/models', filename)
+            save_path = os.path.join('app/model_and_data/models', filename)
             # print(save_path)
             dataset = Network(name=name, category_id=category_id, network_params=str(params), path=save_path, is_deep=is_deep,
                               created_username=user.LOGINNAME)
@@ -304,3 +304,11 @@ def model_delete(id):
         data['msg'] = str(data['msg']).replace('[', '').replace(']', '')
         return jsonify(data)
 
+
+@base.route('/get_datasetByOriid/<id>', methods=['GET'])
+@login_required
+def get_datasetByOriid(id):
+    dataset = Dataset.query.get(id)
+    testdatas = dataset.testdatas
+    testdatas = [testdata.to_dict() for testdata in testdatas]
+    return jsonify(testdatas)
