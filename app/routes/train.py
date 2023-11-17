@@ -1,4 +1,6 @@
-from flask import request, jsonify, send_from_directory
+import uuid
+
+from flask import request, jsonify, send_from_directory, send_file
 from ..models import ModelApp, Network, AppParams
 from .. import db
 from app.model_and_data.TrainModel import Train_ML, Train_DML
@@ -19,16 +21,18 @@ def get_image(id):
     modelapp = ModelApp.query.get(id)
     appparams = modelapp.appliparams
     appparam = appparams[-1]
-    filename = '{}.png'.format(appparam.result)
+    # filename = '{}.png'.format(appparam.result)
+    image_path = appparam.result
+    return send_file(os.environ['app_home'] + fr'/{image_path}')
+    # return send_from_directory('app/model_and_data/results', filename)
 
-    return send_from_directory('app/model_and_data/results', filename)
 
-
-@base.route('/get_imagebypath/<path:filename>')  # 返回训练结果到前端，根据需求还要再改，
-def get_imagebypath(filename):
-    filename = f'{filename}.png'
-    print(filename)
-    return send_from_directory('app/model_and_data/results', filename)
+@base.route('/get_imagebypath/<path:path>')  # 返回训练结果到前端，根据需求还要再改，
+def get_imagebypath(path):
+    # filename = f'{filename}.png'
+    # print(filename)
+    return send_file(os.environ['app_home'] + fr'/{path}')
+    # return send_from_directory('app/model_and_data/results', filename)
 '''
 将训练模型所需要的所有参数都返回
 '''
@@ -93,30 +97,30 @@ def train_model(id):
 
 
 @base.route('/train_model2/<id>', methods=['GET'])
-@login_required
 def train_model2(id):
     model = ModelApp.query.get(id)
-    dataset = model.test_data.ori_dataset.path
+    dataset = model.test_data.ori_dataset.path   # 拿到原始数据集的路径
+    print(dataset)
     network_name = model.network.name
+    network_path = model.network.path
     model_params = eval(model.params)
-    print(model_params)
-    image_name = ''.join(random.choices(string.ascii_letters + string.digits, k=5))
+    image_name = str(uuid.uuid4())
+    image_path = fr'app/model_and_data/results/{image_name}.png'
     train_params = {'dataset': dataset,
                     'network_name': network_name,
+                    'network_path': network_path,
                     'model_params': model_params,
-                    'image_name': image_name}
-    appparam = AppParams(params=str(model_params), result=image_name, app_id=id)
-    db.session.add(appparam)  # 添加但不执行
-    print(111)
-    if model.network.is_deep == 0:
+                    'image_path': image_path}
+    appparam = AppParams(params=str(model_params), result=image_path, app_id=id)
+    db.session.add(appparam)
+    if model.network.is_deep == 0:  # 机器学习
         try:
-            print(222)
             trainModel = Train_ML(**train_params)
             print(333)
-            result = trainModel.train()
+            trainModel.train()
             print(444)
             model.status = 1
-            db.session.commit()  # 执行插入数据库
+            db.session.commit()
             data = {
                 'msg': '训练完成',
                 'code': 200
@@ -129,12 +133,10 @@ def train_model2(id):
             }
     else:
         try:
-            print(444)
-            trainModel = Train_DML(**train_params)
-            print(555)
+            trainModel = Train_DML(**train_params)  # 深度学习
+            print(111)
             trainModel.train()
             model.status = 1
-            print(666)
             db.session.commit()
             data = {
                 'msg': '训练完成',

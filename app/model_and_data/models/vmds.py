@@ -19,12 +19,12 @@ class VMDS:
         self.init = int(init)
         self.tol = float(tol)
 
-    def forward(self, x, image_name):
+    def forward(self, x, path):
         u, u_hat, omega = VMD(x, self.alpha, self.tau, self.K, self.DC, self.init, self.tol)  # 获取结果
         for i in range(self.K):     # 把要展示的内容展示出来
             plt.subplot(self.K, 1, i + 1)
             plt.plot(u[i, :])
-        path = rf'D:\desktop\601backedge\app\model_and_data\results\{image_name}.png'  # 采用绝对路径
+        # 采用绝对路径
         plt.savefig(path)  # 保存图像到本地
         plt.show()  #
         plt.close()

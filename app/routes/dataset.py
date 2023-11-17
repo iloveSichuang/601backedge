@@ -1,17 +1,15 @@
-from flask import Blueprint, render_template, request, jsonify, redirect, url_for, session, send_from_directory, jsonify
 from flask_login import login_required
 from ..models import Network, Dataset, Networkcategory, ModelApp, TestDataset
 import os
 import csv
 import sqlalchemy as sa
-from operator import or_
-from app.models.Organization import Organization
+import pandas as pd
 from ..base import base
-from ..models import Role, Resource, User
+
 from flask import render_template, request
 from flask_login import current_user
 from flask import jsonify
-from datetime import datetime
+
 from .. import db
 
 
@@ -43,7 +41,12 @@ def upload_dataset():
 @base.route('/show_dataset', methods=['GET'])
 @login_required
 def show_dataset():
-    datasets = Dataset.query.all()
+    username = current_user.LOGINNAME
+    if username == 'admin':
+        datasets = Dataset.query.all()
+    else:
+        datasets = Dataset.query.filter_by(created_username=username).all()
+    # datasets = Dataset.query.all()
     datasets = [dataset.to_dict() for dataset in datasets]
     # network.netcat.name
     return jsonify(datasets)
@@ -151,16 +154,20 @@ def select_dataset(id):
 @base.route('/show_userdata', methods=['GET'])
 @login_required
 def show_testdata():
-    user = current_user
-    datasets = TestDataset.query.all()
+    username = current_user.LOGINNAME
+    if username == 'admin':
+        datasets = TestDataset.query.all()
+    else:
+        datasets = TestDataset.query.filter_by(created_username=username).all()
     datasets = [dataset.to_dict() for dataset in datasets]
     # network.netcat.name
     return jsonify(datasets)
 
 
-@base.route('/delete_testdata/<id>', methods=['DELETE'])
+@base.route('/delete_userdata/<id>', methods=['DELETE'])
 @login_required
-def delete_testdata(id):
+def delete_userdata(id):
+    # print(id)
     if ',' not in id:
         dataset = TestDataset.query.get(id)
         if dataset:
@@ -173,6 +180,7 @@ def delete_testdata(id):
                 }
                 return jsonify(data)
             except sa.exc.IntegrityError as e:
+                db.session.close()
                 data = {
                     'msg': f"外键约束错误",
                     'code': 400
@@ -209,9 +217,25 @@ def delete_testdata(id):
         return jsonify(data)
 
 
-@base.route('/get_testdata',methods=['GET'])
+@base.route('/get_userdata_info/<id>', methods=['GET'])
 @login_required
-def get_testdata():
-    testdatas = TestDataset.query.all()
-    testdatas = [testdata.to_dict() for testdata in testdatas]
-    return jsonify(testdatas)
+def get_testdata_info(id):
+    testdata = TestDataset.query.get(id)
+    origin_data_path = testdata.ori_dataset.path  # 原始数据集路径
+    data = pd.read_csv(os.environ['app_home']+fr'/{origin_data_path}')
+    input = eval(testdata.input)
+    output = eval(testdata.output)
+    inputs = data[input]
+    outputs = data[output]
+    # print(type(inputs.to_json(orient='records')))
+    datas = {
+        'input': eval(inputs.to_json(orient='records')),
+        'output': eval(outputs.to_json(orient='records')),
+    }
+    # in_out_data = eval(testdata.input) + eval(testdata.output)
+    # print(in_out_data)
+    # print(type(in_out_data))
+    # datas = data[in_out_data]
+    # datas = datas.to_json(orient='records')
+    # print(type(datas['input']))
+    return datas

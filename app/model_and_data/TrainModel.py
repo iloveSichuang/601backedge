@@ -6,68 +6,74 @@ from torch.utils.data import Dataset, DataLoader
 import importlib.util
 import torch.optim as optim
 import matplotlib.pyplot as plt
-
-from .MyDataset import MyDatasetReader
+import os
+from app.model_and_data.MyDataset import MyDatasetReader
 
 
 class Train_ML:
-    def __init__(self, dataset, network_name, model_params, image_name):
-        self.dataset = fr'D:\desktop\601backedge\app\model_and_data\datasets\{dataset}'
+    def __init__(self, dataset, network_name, network_path, model_params, image_path):
+        # print(os.environ['app_home'])
+        self.dataset = os.environ['app_home'] + fr'/{dataset}'
+        self.network_path = os.environ['app_home'] + fr'/{network_path}'
         self.network = network_name
         self.params = model_params
-        self.image_name = image_name
+        self.path = os.environ['app_home'] + fr'/{image_path}'  # 图像保存路径
         '''
         随机生成的图像文件名
         注意传进来的是数据文件的名字，需要拼接以便找到文件的地址
         '''
     def train(self):
-        # data = np.genfromtxt('../datasets/signal.csv', delimiter=',')
         data = np.genfromtxt(self.dataset, delimiter=',')   # 读取数据
+        print(data)
         # 映射网络模型
         # 假设网络模型名为小写（vmd）,类名为大写（VMD）
         # 步骤1：获取模块的规范
-        module_spec = importlib.util.spec_from_file_location(self.network.upper(), fr'D:\desktop\601backedge\app\model_and_data\models\{self.network}.py')
+        module_spec = importlib.util.spec_from_file_location(self.network, fr'{self.network_path}')
 
         # 步骤2：加载模块
         module = importlib.util.module_from_spec(module_spec)
         module_spec.loader.exec_module(module)
 
         # 步骤3：获取类对象
-        class_obj = getattr(module, self.network.upper())
+        class_obj = getattr(module, self.network)
 
         model_ = class_obj(**self.params)
-
+        print(model_)
+        print(444)
         # 要结果数据，还是要画图？
         # 如何保存训练好的保存数据
-        # a, b, c = model_.forward(data)  # 训练数据
+
+        a, b, c = model_.forward(data, self.path)  # 训练数据
         # model_.plot(data, self.image_name)  # 画图
-        result = model_.forward(data, self.image_name)
-        return result
+        return a,b,c
 
 
 class Train_DML:
-    def __init__(self, dataset, network_name, model_params, image_name):
-        self.dataset = fr'D:\desktop\601backedge\app\model_and_data\datasets\{dataset}'
+    def __init__(self, dataset, network_name, network_path, model_params, image_path):
+        self.dataset = os.environ['app_home'] + fr'/{dataset}'
+        self.network_path = os.environ['app_home'] + fr'/{network_path}'
         self.network = network_name
+        self.params = model_params
+        self.path = os.environ['app_home'] + fr'/{image_path}'  # 图像保存路径
         # 默认网络都含有这几个参数
         self.epochs = int(model_params['epochs'])
         self.learning_rate = float(model_params['learning_rate'])
         self.batch_size = int(model_params['batch_size'])
         self.params = model_params
-        self.image_name = image_name
 
     def train(self):
-        data = MyDatasetReader(self.dataset)
+        print(self.dataset)
+        data = MyDatasetReader(fr'{self.dataset}')
         print(data)
-
-        module_spec = importlib.util.spec_from_file_location(self.network.upper(), fr'D:\desktop\601backedge\app\model_and_data\models\{self.network}.py')
+        print(self.network_path)
+        module_spec = importlib.util.spec_from_file_location(self.network, fr'{self.network_path}')
 
         # 步骤2：加载模块
         module = importlib.util.module_from_spec(module_spec)
         module_spec.loader.exec_module(module)
 
         # 步骤3：获取类对象
-        class_obj = getattr(module, self.network.upper())
+        class_obj = getattr(module, self.network)
 
         # 将不需要的参数删除
         keys_to_delete = ['epochs', 'learning_rate', 'batch_size']
@@ -75,8 +81,9 @@ class Train_DML:
             if key in self.params:
                 del self.params[key]
         # 实例化类
+        print(23456)
         model_ = class_obj(**self.params)
-
+        print(333)
         criterion = nn.MSELoss()
         optimizer = optim.Adam(model_.parameters(), lr=self.learning_rate)
         data = DataLoader(data, batch_size=self.batch_size, shuffle=False)
@@ -85,7 +92,7 @@ class Train_DML:
         for epoch in range(self.epochs):
             losses = 0
             for features, labels in data:
-                output = model_(features)
+                output = model_.forward(features)
                 loss = criterion(output, labels)
                 optimizer.zero_grad()
                 loss.backward()
@@ -94,10 +101,9 @@ class Train_DML:
             loss_l.append(losses/len(data))
             if (epoch + 1) % 10 == 0:
                 print(f'Epoch [{epoch + 1}/{self.epochs}], Loss: {losses/len(data):.4f}')
-        print(loss_l)
         plt.plot(loss_l)
-        path = rf'D:\desktop\601backedge\app\model_and_data\results\{self.image_name}.png'
-        plt.savefig(path)
+
+        plt.savefig(self.path)
         plt.show()
         plt.close()
 

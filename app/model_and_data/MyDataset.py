@@ -13,14 +13,6 @@ class MyDatasetReader(Dataset):
     根据数据集不同，另外加处理方式
     （若要根据网络构造不同处理方法，需要另写）
     """
-    def __new__(cls, csv_path):
-        if csv_path == r'D:\py\workspace\模型训练\TrainProject--3\model_and_data\datasets\data.csv':
-            return super().__new__(MyClassOption1)
-        # elif csv_path == 'datasets/digits.csv':
-        #     return super().__new__(MyClassOption2)
-        else:
-            return super().__new__(cls)
-
     def __init__(self, csv_path):
         # 公共初始化代码
         self.data = pd.read_csv(csv_path)
@@ -35,23 +27,6 @@ class MyDatasetReader(Dataset):
         label = torch.tensor(self.labels.iloc[index], dtype=torch.float32)
         return feature, label
 
-
-class MyClassOption1(MyDatasetReader):
-    def __init__(self, csv_path):
-        super().__init__(csv_path)
-        self.features = self.data.iloc[:, 1:-1]
-        self.labels = self.data.iloc[:, -1]
-        print(111)
-
-        # Option1特有的初始化代码
-
-
-class MyClassOption2(MyDatasetReader):
-    def __init__(self, csv_path):
-        super().__init__(csv_path)
-        self.features = self.data.iloc[:, :-1]
-        self.labels = self.data.iloc[:, -1]
-        print(222)
 
 
 if __name__ == '__main__':

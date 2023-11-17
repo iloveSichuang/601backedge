@@ -54,12 +54,13 @@ def upload_network():
         if file:
             # 保存文件到服务器
             filename = file.filename
-
-            file.save(os.path.join('app/model_and_data/models', filename))
+            save_path = os.environ['app_home']+ fr'/app/model_and_data/models/{filename}'
+            file.save(save_path)
+            # file.save(os.path.join('app/model_and_data/models', filename))
             # 将保存路径存入数据库
-            save_path = os.path.join('app/model_and_data/models', filename)
+            path = fr'/app/model_and_data/models/{filename}'
             # print(save_path)
-            dataset = Network(name=name, category_id=category_id, network_params=str(params), path=save_path, is_deep=is_deep,
+            dataset = Network(name=name, category_id=category_id, network_params=str(params), path=path, is_deep=is_deep,
                               created_username=user.LOGINNAME)
             db.session.add(dataset)
             db.session.commit()
@@ -80,7 +81,7 @@ def upload_modelapp():
         data = request.get_json()
         model_name = data['model_name']
         model_description = data['model_description']
-        dataset = data['dataset']
+        data_id = data['dataset']  # 拿到测试数据集的id
         network_id = data['network_id']
         network = Network.query.get(network_id)
         nework_params = network.network_params
@@ -96,7 +97,7 @@ def upload_modelapp():
 
         model = ModelApp(model_name=model_name,
                          model_description=model_description,
-                         dataset=dataset,
+                         data_id=data_id,
                          params=str(params),
                          network_id=network_id,
                          created_username=user.LOGINNAME)
@@ -110,6 +111,11 @@ def upload_modelapp():
 
 @base.route('/show_networks', methods=['GET'])
 def show_networks():
+    username = current_user.LOGINNAME
+    # if username == 'admin':
+    #     networks1 = Network.query.all()
+    # else:
+    #     networks1 = Network.query.filter_by(created_username=username).all()
     networks1 = Network.query.all()
     networks = [network.to_dict() for network in networks1]
 
@@ -186,7 +192,7 @@ def get_category_networks(id):
     netcat = Networkcategory.query.get(id)
     options = netcat.networks
     networks = [option.to_dict() for option in options]
-    print(networks)
+
     return jsonify(networks)
 
 
@@ -214,7 +220,12 @@ def get_datasets():
 
 @base.route('/show_models', methods=['GET'])
 def show_models():
-    models = ModelApp.query.all()
+    username = current_user.LOGINNAME
+    if username == 'admin':
+        models = ModelApp.query.all()
+    else:
+        models = ModelApp.query.filter_by(created_username=username).all()
+    # models = ModelApp.query.all()
     models = [model.to_dict() for model in models]
     return jsonify(models)
 
@@ -305,9 +316,9 @@ def model_delete(id):
         return jsonify(data)
 
 
-@base.route('/get_datasetByOriid/<id>', methods=['GET'])
+@base.route('/get_TestData_ById/<id>', methods=['GET'])  # 通过原始数据集的id，获取以它为基础的所有测试数据集
 @login_required
-def get_datasetByOriid(id):
+def get_TestData_ById(id):
     dataset = Dataset.query.get(id)
     testdatas = dataset.testdatas
     testdatas = [testdata.to_dict() for testdata in testdatas]

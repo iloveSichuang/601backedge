@@ -3,7 +3,9 @@ from app import create_app, db
 from flask import g, render_template
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
+import os
 
+os.environ['app_home'] = os.path.abspath(os.path.dirname(__file__))
 
 @app.errorhandler(404)
 def page_not_found(e):

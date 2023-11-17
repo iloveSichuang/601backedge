@@ -19,6 +19,7 @@ class Network(db.Model):
     is_deep = db.Column(db.Integer, default=0)   # 0表示为机器学习 1表示深度学习
     created_username = db.Column(db.String(100), nullable=False)  # LoginName
     modelapps = db.relationship('ModelApp', backref='network')
+    create_time = db.Column(db.DateTime, default=datetime.now)
     def to_dict(self):
         if self.is_deep==0:
             type = '机器学习'
@@ -46,12 +47,14 @@ class ModelApp(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     model_name = db.Column(db.String(100), nullable=False)
     model_description = db.Column(db.Text, nullable=False)
-    dataset = db.Column(db.String(100), nullable=False)  # 数据集应该存放的也是id,
+    data_id = db.Column(db.Integer, db.ForeignKey('testdata.id'), nullable=False)
+    # dataset = db.Column(db.String(100), nullable=False)  # 数据集应该存放的也是id,
     params = db.Column(db.String(500), nullable=False)
     network_id = db.Column(db.Integer, db.ForeignKey('network.id'), nullable=False)
     appliparams = db.relationship('AppParams', backref='model_application')
     status = db.Column(db.Integer, default=0)   # 0表示为未训练 1表示训练完成
     created_username = db.Column(db.String(100), nullable=False)
+    create_time = db.Column(db.DateTime, default=datetime.now)
     def to_dict(self):
         if self.status == 0:
             percentage = 0
@@ -64,7 +67,7 @@ class ModelApp(db.Model):
             appparam = appparams[-1]
             path = appparam.result
         return {'id': self.id, 'model_name': self.model_name, 'model_description': self.model_description,
-                'network': self.network.name, 'dataset': self.dataset, 'params': eval(self.params), 'process': process,
+                'network': self.network.name, 'dataset': self.test_data.name, 'params': eval(self.params), 'process': process,
                 'status': self.status, 'percentage': percentage, 'imagePath': None, 'path':path, 'created_username': self.created_username}
 
 
@@ -74,37 +77,10 @@ class AppParams(db.Model):
     params = db.Column(db.String(500), nullable=False)
     result = db.Column(db.String(255), nullable=False)  # 返回文件名（图像/文件）
     app_id = db.Column(db.Integer, db.ForeignKey('model_application.id'), nullable=False)
-
+    train_time = db.Column(db.DateTime, default=datetime.now)
     def to_dict(self):
         image_path = fr'D:\Users\601backedge\app\model_and_data\results\{self.result}.png'
         return {'id': self.id, 'params': self.params, 'result': image_path}
-
-'''
-数据集名称
-数据集地址
-'''
-
-
-# class Dataset(db.Model):
-#     __tablename__ = 'in_out'
-#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-#     name = db.Column(db.String(255), nullable=False)
-#     file_path = db.Column(db.String(255), nullable=False)
-#     input = db.Column(db.String(255), nullable=False)
-#     output = db.Column(db.String(255), nullable=False)
-#     model_id = db.Column(db.Integer, db.ForeignKey('csv_file.id'), nullable=False)
-#
-#     def to_dict(self):
-#         return {'id': self.id, 'name': self.name, 'path': self.file_path, 'input': self.input, 'output': self.output}
-
-#
-# class Csv_file(db.Model):
-#     __tablename__ = 'csv_file'
-#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-#     file_name = db.Column(db.String(255), nullable=False)
-#     file_path = db.Column(db.String(255), nullable=False)
-#     upload_time = db.Column(db.DateTime, default=db.func.current_timestamp())
-#     datasets = db.relationship('Dataset', backref='original_file')
 
 
 
